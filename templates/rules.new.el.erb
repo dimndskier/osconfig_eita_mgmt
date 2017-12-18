@@ -1,0 +1,453 @@
+# This file managed by puppet module: osconfig_eita_mgmt
+# DO NOT ALTER outside of the Puppet Framework.
+#
+#
+# First rule - delete all
+-D
+# Increase the buffers to survive stress events.
+# Make this bigger for busy systems
+-b 16384
+# PANIC on audit failure
+-f 2
+#
+<% if "#{@os_brand}-#{@os_revision}" == 'redhat-7' -%>
+# ACTION (-a) Rules
+#- Make the loginuid immutable.  This prevents tampering with the auid
+--loginuid-immutable
+#
+-a never,user -F subj_type=crond_t
+#
+-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k audit_time_rules
+-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S clock_settime -k audit_time_rules
+-a always,exit -F arch=b32 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access
+-a always,exit -F arch=b32 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access
+-a always,exit -F arch=b32 -S init_module -S delete_module -k modules
+-a always,exit -F arch=b32 -S mount -F auid=0 -k export
+-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k export
+-a always,exit -F arch=b32 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid=0 -k delete
+-a always,exit -F arch=b32 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete
+-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
+-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k audit_time_rules
+-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S clock_settime -k audit_time_rules
+-a always,exit -F arch=b64 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access
+-a always,exit -F arch=b64 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access
+-a always,exit -F arch=b64 -S init_module -S delete_module -k modules
+-a always,exit -F arch=b64 -S mount -F auid=0 -k export
+-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k export
+-a always,exit -F arch=b64 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid=0 -k delete
+-a always,exit -F arch=b64 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete
+-a always,exit -F arch=b64 -S sethostname -S setdomainname -k audit_rules_networkconfig_modification
+-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
+-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S shutdown -F auid!=4294967295 -k Device_Shutdown
+-a always,exit -F dir=/etc/NetworkManager/ -F perm=wa -F key=system-locale
+-a always,exit -F path=/bin/mkdir -F perm=x -F auid!=4294967295 -k Directory_Create
+-a always,exit -F path=/bin/rm -F perm=x -F auid!=4294967295 -k File_or_Directory_Delete
+-a always,exit -F path=/bin/sudoedit -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged-priv_change
+-a always,exit -F path=/bin/su -F perm=x -F auid>=1000 -F auid!=4294967295 -k Admin_Root_Access
+-a always,exit -F path=/etc/pam.d/sudo -F perm=x -F auid>=1000 -F auid!=4294967295 -k Role_Escallation
+-a always,exit -F path=/etc/pam.d/su -F perm=x -F auid>=1000 -F auid!=4294967295 -k Role_Escallation
+-a always,exit -F path=/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/sbin/pwck -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/at -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/cgclassify -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/cgexec -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chgrp -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/curl -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/fusermount -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/kgrantpty -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/kpac_dhcp_helper -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/ksu -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/locate -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/newrole -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/pkexec -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/rcp -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/rlogin -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/rsh -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/screen -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/staprun -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/wall -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/wget -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/write -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/Xorg -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+# Watch yum transactions
+-a always,exit -F path=/usr/bin/yum -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/lib64/dbus-1/dbus-daemon-launch-helper -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/lib64/vte-2.91/gnome-pty-helper -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/abrt-action-install-debuginfo-to-abrt-cache -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged-ssh
+-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged-terminal
+-a always,exit -F path=/usr/libexec/qemu-bridge-helper -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/spice-gtk-x86_64/spice-client-glib-usb-acl-helper -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/sssd/krb5_child -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/sssd/ldap_child -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/sssd/p11_child -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/sssd/proxy_child -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/sssd/selinux_child -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/utempter/utempter -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/lib/polkit-1/polkit-agent-helper-1 -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/ccreds_validate -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/chcon -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged-priv_change
+-a always,exit -F path=/usr/sbin/groupadd -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/groupdel -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/groupmod -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/lockdev -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/mount.nfs -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/netreport -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/newusers -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged-priv_change
+# Watch rpm transactions
+-a always,exit -F path=/usr/sbin/rpm -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged-priv_change
+-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged-priv_change
+-a always,exit -F path=/usr/sbin/suexec -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/useradd -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/userdel -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/usernetctl -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged
+#
+# WATCH (-w)  Rules
+#- Watch audit configuration files
+-w /etc/audit/auditd.conf -p wa
+-w /etc/audit/audit.rules -p wa
+-w /etc/libaudit.conf -p wa
+-w /etc/sysconfig/auditd -p wa
+#- Watches on the audit logs.  The compliance scan searches for these lines, but they are very noisy.
+-w /var/log/audit/audit.log -p wa
+-w /var/log/audit/ -p wa
+-w /etc/audit/ -p wa -k Audit_Directory_Access
+-w /etc/audit/rules.d/ -p wa -k Audit_Directory_Access
+#- Watch package management activities
+-w /usr/bin/yum -p wa   -k watch_pkg_mgmt
+-w /usr/sbin/rpm -p wa  -k watch_pkg_mgmt
+#- Watch PAM, AUTH and login configuration
+-w /etc/login.defs -p wa -k watch_user_security
+-w /etc/securetty -p wa -k watch_user_security
+-w /etc/pam.d/ -p raw  -k watch_user_security
+-w /etc/group -p wa  -k identity
+-w /etc/gshadow -p wa -k identity
+-w /etc/passwd -p wa -k identity
+-w /etc/security/opasswd -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/sudoers -p wa -k identity
+-w /etc/sudoers.d -p wa -k privileged-actions
+#- Watch network stack configurations
+-w /etc/resolv.conf -p raw                 -k watch_network_stack
+-w /etc/nsswitch.conf -p raw               -k watch_network_stack
+-w /etc/sysconfig/network-scripts/ -p raw  -k watch_network_stack
+-w /etc/sysconfig/network -p wa -k watch_network_stack
+#- Watch kernel configs
+-w /etc/sysctl.conf -p wa -k watch_kernel_mgmt
+-w /etc/modprobe.conf -p wa -k watch_kernel_mgmt
+-w /sbin/insmod -p x -k modules
+-w /sbin/modprobe -p x -k modules
+-w /sbin/rmmod -p x -k modules
+#- Watch syslog configuration
+-w /etc/rsyslog.conf -p wa -k watch_syslog_configs
+#- Things that could affect system locale
+-w /etc/hosts -p wa -k system-locale
+-w /etc/issue.net -p wa -k system-locale
+-w /etc/issue -p wa -k system-locale
+-w /etc/localtime -p wa -k time-change
+# Things that could affect MAC policy
+-w /etc/selinux/ -p wa -k MAC-policy
+#- Logins
+-w /var/log/faillog -p wa -k logins
+-w /var/log/lastlog -p wa -k logins
+-w /var/log/tallylog -p wa -k logins
+-w /var/run/faillock/ -p wa -k logins
+#- Process and session initiation (unsuccessful and successful)
+-w /var/log/btmp -p wa -k session
+-w /var/log/wtmp -p wa -k session
+-w /var/run/utmp -p wa -k session
+#- Monitor usage of commands to change power state
+-w /sbin/halt -p x -k power
+-w /sbin/poweroff -p x -k power
+-w /sbin/reboot -p x -k power
+-w /sbin/shutdown -p x -k power
+-w /usr/bin/systemctl -p x -k power
+-w /usr/sbin/telinit -p x -k power
+-w /usr/sbin/init -p x -k power
+<% elsif "#{@os_brand}-#{@os_revision}" == 'redhat-6' -%>
+# ACTION (-a) Rules
+# Filters out noisy cron related messages
+-a never,user -F subj_type=crond_t
+#
+-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change
+-a always,exit -F arch=b32 -S adjtimex -S stime -S settimeofday -S clock_settime -k audit_time_rules
+-a always,exit -F arch=b32 -S chmod -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S chmod -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S chown -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S chown -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S clock_settime -k time-change
+-a always,exit -F arch=b32 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b32 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid=0 -k access
+-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid=0 -k access
+-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b32 -S fchmodat -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S fchmod -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S fchmod -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S fchownat -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S fchownat -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S fchown -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S fchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S fsetxattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S init_module -S delete_module -k modules
+-a always,exit -F arch=b32 -S lchown -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S lremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S lsetxattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S mount -F auid=0 -k export
+-a always,exit -F arch=b32 -S mount -F auid>=500 -F auid!=4294967295 -k export
+-a always,exit -F arch=b32 -S removexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S removexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid=0 -k delete
+-a always,exit -F arch=b32 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
+-a always,exit -F arch=b32 -S sethostname -S setdomainname -k audit_network_modifications
+-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
+-a always,exit -F arch=b32 -S setxattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S setxattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S unlink -S rmdir -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
+-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
+-a always,exit -F arch=b64 -S adjtimex -S settimeofday -S clock_settime -k audit_time_rules
+-a always,exit -F arch=b64 -S chmod -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S chmod -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S chown -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S chown -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S clock_settime -k time-change
+-a always,exit -F arch=b64 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b64 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid=0 -k access
+-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid=0 -k access
+-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b64 -S fchmodat -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S fchmod -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S fchmod -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S fchownat -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S fchownat -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S fchown -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S fchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S fsetxattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S init_module -S delete_module -k modules
+-a always,exit -F arch=b64 -S lchown -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S lremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S lsetxattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S mount -F auid=0 -k export
+-a always,exit -F arch=b64 -S mount -F auid>=500 -F auid!=4294967295 -k export
+-a always,exit -F arch=b64 -S removexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S removexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid=0 -k delete
+-a always,exit -F arch=b64 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
+-a always,exit -F arch=b64 -S sethostname -S setdomainname -k audit_network_modifications
+-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
+-a always,exit -F arch=b64 -S settimeofday -k audit_time_rules
+-a always,exit -F arch=b64 -S setxattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S setxattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S shutdown -F auid!=4294967295 -k Device_Shutdown
+-a always,exit -F arch=b64 -S unlink -S rmdir -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
+-a always,exit -F dir=/etc/NetworkManager/ -F perm=wa -F key=system-locale
+-a always,exit -F path=/bin/cgclassify -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/bin/cgexec -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/bin/fusermount -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/bin/mkdir -F perm=x -F auid!=4294967295 -k Directory_Create
+-a always,exit -F path=/bin/mount -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/bin/ping6 -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/bin/ping -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/bin/rm -F perm=x -F auid!=4294967295 -k File_or_Directory_Delete
+-a always,exit -F path=/bin/su -F perm=x -F auid>=500 -F auid!=4294967295 -k Admin_Root_Access
+-a always,exit -F path=/bin/su -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/bin/umount -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/etc/pam.d/sudo -F perm=x -F auid>=500 -F auid!=4294967295 -k Role_Escallation
+-a always,exit -F path=/etc/pam.d/su -F perm=x -F auid>=500 -F auid!=4294967295 -k Role_Escallation
+-a always,exit -F path=/lib64/dbus-1/dbus-daemon-launch-helper -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/sbin/mount.nfs -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/sbin/netreport -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/sbin/pam_timestamp_check -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/sbin/pwck -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/at -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chgrp -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/curl -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/kgrantpty -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/kpac_dhcp_helper -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/ksu -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/locate -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/newrole -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/pkexec -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/rcp -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/rlogin -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/rsh -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/staprun -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/wall -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/wget -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/write -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/bin/Xorg -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+# Watch yum transactions
+-a always,exit -F path=/usr/bin/yum -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/lib64/vte/gnome-pty-helper -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/kde4/kdesud -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/polkit-1/polkit-agent-helper-1 -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/libexec/utempter/utempter -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/ccreds_validate -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/groupadd -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/groupdel -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/groupmod -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/lockdev -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/netreport -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/newusers -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+# Watch rpm transactions
+-a always,exit -F path=/usr/sbin/rpm -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/semangae -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/suexec -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/useradd -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/userdel -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+-a always,exit -F path=/usr/sbin/usernetctl -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged
+#
+# WATCH (-w)  Rules
+#- Watch audit configuration files
+-w /etc/audit/auditd.conf -p wa -k watch_audit_configs
+-w /etc/audit/audit.rules -p wa -k watch_audit_configs
+-w /etc/libaudit.conf -p wa     -k watch_audit_configs
+-w /etc/sysconfig/auditd -p wa -k watch_audit_configs
+#- Watches on the audit logs.  The compliance scan searches for these lines, but they are very noisy.
+-w /var/log/audit/audit.log -p wa -k watch_audit_tampering
+-w /var/log/audit/ -p wa -k watch_audit_tampering
+-w /etc/audit/ -p wa -k watch_audit_tampering
+-w /etc/audit/rules.d/ -p wa -k watch_audit_tampering
+#- Watch package management activities
+-w /usr/bin/yum -p wa   -k watch_pkg_mgmt
+-w /usr/sbin/rpm -p wa  -k watch_pkg_mgmt
+#- Watch PAM, AUTH and login configuration
+-w /etc/login.defs -p wa  -k watch_user_security
+-w /etc/securetty -p wa  -k watch_user_security 
+-w /etc/pam.d/ -p wa    -k watch_user_security  
+-w /etc/group -p wa  -k identity
+-w /etc/gshadow -p wa -k identity
+-w /etc/passwd -p wa -k identity
+-w /etc/security/opasswd -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/sudoers -p wa -k identity
+#- Watch network stack configurations
+-w /etc/resolv.conf -p raw                 -k watch_network_stack
+-w /etc/nsswitch.conf -p raw               -k watch_network_stack
+-w /etc/sysconfig/network-scripts/ -p raw  -k watch_network_stack
+-w /etc/sysconfig/network -p wa -k watch_network_stack
+#- Watch kernel configs
+-w /etc/sysctl.conf -p wa -k watch_kernel_mgmt
+-w /etc/modprobe.conf -p wa -k watch_kernel_mgmt
+-w /sbin/insmod -p x -k modules
+-w /sbin/modprobe -p x -k modules
+-w /sbin/rmmod -p x -k modules
+#- Watch syslog configuration
+-w /etc/rsyslog.conf -p raw -k watch_syslog_configs
+#- Things that could affect system locale
+-w /etc/hosts -p wa -k system-locale
+-w /etc/issue.net -p wa -k system-locale
+-w /etc/issue -p wa -k system-locale
+-w /etc/localtime -p wa -k time-change
+# Things that could affect MAC policy
+-w /etc/selinux/ -p wa -k MAC-policy
+#- Logins
+-w /var/log/faillog -p wa -k logins
+-w /var/log/lastlog -p wa -k logins
+-w /var/log/tallylog -p wa -k logins
+#- Process and session initiation (unsuccessful and successful)
+-w /var/log/btmp -p wa -k session
+-w /var/log/wtmp -p wa -k session
+-w /var/run/utmp -p wa -k session
+#- Monitor usage of commands to change power state
+-w /sbin/halt -p x -k power
+-w /sbin/poweroff -p x -k power
+-w /sbin/reboot -p x -k power
+-w /sbin/shutdown -p x -k power
+-w /usr/bin/systemctl -p x -k power
+-w /usr/sbin/telinit -p x -k power
+-w /usr/sbin/init -p x -k power
+<% end -%>
+#
+# _ALWAYS_ the very last line
+-e 2

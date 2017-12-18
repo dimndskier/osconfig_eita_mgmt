@@ -1,0 +1,21 @@
+<% if "#{@os_brand}-#{@os_revision}" == 'redhat-7' -%>
+# This file managed by puppet module: osconfig_eita_mgmt
+#
+$ModLoad             imfile
+$InputFileName       <app log>
+$InputFileTag        app-audit
+$InputFileStateFile  stat-app-audit
+$InputSeverity       info
+$InputFileFacility   local4
+$InputRunFileMonitor
+<% elsif  "#{@os_brand}-#{@os_revision}" == 'redhat-6' -%>
+# This file managed by puppet module: osconfig_eita_mgmt
+#
+$ModLoad             imfile
+$InputFileName       <app log>
+$InputFileTag        app-audit
+$InputFileStateFile  stat-app-audit
+$InputSeverity       info
+$InputFileFacility   local4
+$InputRunFileMonitor
+<% end -%>

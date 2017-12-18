@@ -1,0 +1,17 @@
+<% if "#{@os_brand}-#{@os_revision}" == 'redhat-7' -%>
+# This file managed by puppet module: osconfig_eita_mgmt
+# DO NOT ALTER outside of the Puppet Framework.
+#
+#
+#
+#!/bin/bash
+/sbin/ausearch --input-logs -i -ts recent | /bin/egrep -v -e '^-+$' | /bin/logger -p local4.info
+<% elsif "#{@os_brand}-#{@os_revision}" == 'redhat-6' -%>
+# This file managed by puppet module: osconfig_eita_mgmt
+# DO NOT ALTER outside of the Puppet Framework.
+#
+#
+#
+#!/bin/bash
+/sbin/ausearch --input-logs -i -ts recent | /bin/egrep -v -e '^-+$' | /bin/logger -p local4.info
+<% end -%>
